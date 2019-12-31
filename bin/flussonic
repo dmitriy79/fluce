@@ -1,0 +1,193 @@
+#!/bin/sh
+
+
+if [ -z "$NODE" ]; then
+  NODE="flussonic@server.l"
+fi
+
+BOOTARGS=""
+ERLARGS=""
+
+export ERL_CRASH_DUMP_SECONDS=0
+
+ASYNC_THREADS=${ASYNC_THREADS-"+A 16 +a 2048"}
+
+
+[ -f /etc/default/flussonic ] && . /etc/default/flussonic
+
+
+# production defaults
+
+ASYNC_THREADS_DEFAULT="+Bi +A 100 +a 32"
+MEM_DEFAULT="+MBas aoffcaobf +MMmcs 30 +MBsbct 2048 +MBacul 10 +MBlmbcs 2048 +MBsmbcs 2048"
+
+# stbt/sbt db is for binding to core
+# sbwt how long scheduler will wait for going to sleep
+# sfwi to check if schedulers have what to do
+SCHED_DEFAULT="+sbwt short +swt very_low +sfwi 20 +sub true  +zebwt short"
+
+
+
+while [ $# -ge 1 ]; do
+  opt="$1"
+  OPTARG="$2"
+  shift
+  case $opt in
+    --help|-h)
+      echo "$0 [-n nodename] [-s server_id_path] [-c config_path] [-l log_dir] [-m snmp_dir] [-k known_hostname] \
+[-e production] [-p pidfile] [-b boot_error_file] [-a alias ip] -d"
+      echo "  -n   default flussonic@server.l:  nodename"
+      echo "  -s   default priv/server.id or /etc/flussonic/server.id:  path to server id file"
+      echo "  -c   default priv/flussonic.conf or /etc/flussonic/flussonic.conf:  path to config file"
+      echo "  -l   default /var/log/flussonic:  path to log directory"
+      echo "  -m   default /var/run/flussonic:  path to snmp directory"
+      echo "  -k   default `hostname`:  hostname of flussonic as it shows to others"
+      echo "  -e   run in specified mode, for example production"
+      echo "  -p   default none:  path to pidfile"
+      echo "  -a   hostname ip: alternative way to specify DNS hostname of some peer"
+      echo "  -d   daemonize"
+      echo "  -noinput   disable interactive console for systemd"
+      exit 1
+      ;;
+    --node|-n)
+      NODE=$OPTARG
+      shift
+      ;;
+    --server_id_path|-s)
+      BOOTARGS="$BOOTARGS server_id_path $OPTARG"
+      shift
+      ;;
+    --config|-c)
+      BOOTARGS="$BOOTARGS config_path $OPTARG"
+      shift
+      ;;
+    --logs|-l)
+      BOOTARGS="$BOOTARGS log_dir $OPTARG"
+      LOGDIR="$OPTARG"
+      shift
+      ;;
+    --snmp_dir|-m)
+      BOOTARGS="$BOOTARGS snmp_dir $OPTARG"
+      shift
+      ;;
+    --hostname|-k)
+      BOOTARGS="$BOOTARGS hostname $OPTARG"
+      shift
+      ;;
+    --pid|-p)
+      BOOTARGS="$BOOTARGS pidfile $OPTARG"
+      PIDFILE="$OPTARG"
+      shift
+      ;;
+    --bootlog|-b)
+      BOOTARGS="$BOOTARGS boot_error_file $OPTARG"
+      ERRORFILE="$OPTARG"
+      shift
+      ;;
+    --alias|-a)
+      host="${OPTARG}"
+      shift
+      ip="$1"
+      shift
+      BOOTARGS="$BOOTARGS alias $host $ip"
+      ;;
+    -noinput)
+      ERLARGS="$ERLARGS -noinput"
+      ;;
+    --debug)
+      BOOTARGS="$BOOTARGS debug_start"
+      ;;
+    --env|-e)
+      PROD=true
+      shift
+      ;;
+    --daemonize|-d)
+      DAEMONIZE=true
+      ;;
+    *)
+      echo "Invalid option '$opt' '$OPTARG'"
+      exit 4
+  esac
+done
+
+ERL_MORE_OPTS=${ERL_MORE_OPTS-""}
+BEAM_TUNE=${BEAM_TUNE:-"+K true +zdbbl 20480 $ASYNC_THREADS $SCHED $MEM $ERL_MORE_OPTS"}
+
+if [ "$PROD" = "true" ] || [ -f /opt/flussonic/bin/erl ]; then
+  BOOTARGS="$BOOTARGS production"
+  SCHED=${SCHED-$SCHED_DEFAULT}
+  MEM=${MEM-$MEM_DEFAULT}
+  ASYNC_THREADS=${ASYNC_THREADS-$ASYNC_THREADS_DEFAULT}
+  ulimit -n 131072
+  ARCH=`uname -m`
+  if [ ! -f /etc/alpine-release -a "$ARCH" = "x86_64" ]; then
+    export LD_PRELOAD=/opt/flussonic/lib/flussonic/priv/os3_amd64.so
+  fi
+  export PROCNAME=flussonic
+  if [ -w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ]; then
+    for i in  /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance > $i; done
+  fi
+  export CHECK_SCALING_GOVERNOR=60
+  if [ -d /opt/flussonic ]; then
+    cd /opt/flussonic
+  fi
+fi
+
+if [ -z ${ERL_INETRC+x} ]; then
+  if [ -f /opt/flussonic/.inetrc ]; then
+    export ERL_INETRC=/opt/flussonic/.inetrc
+  else
+    export ERL_INETRC=`pwd`/deploy/packaging/.inetrc
+  fi
+fi
+
+if [ -d _build/prod/opt/flussonic/lib/ ]; then
+  export ERL_LIBS=_build/prod/opt/flussonic/lib/
+elif [ -d _build/default/lib ]; then
+  export ERL_LIBS=_build/default/lib
+else
+  export ERL_LIBS=/opt/flussonic/lib:/opt/flussonic/apps
+fi
+
+if [ "$PIDFILE" != "" ] && [ -f $PIDFILE ]; then
+  if kill -0 `cat $PIDFILE` 2>/dev/null ; then
+    echo "Seems that flussonic is running under pid `cat $PIDFILE`. Stop it first"
+    exit 5
+  fi
+fi
+
+if [ "$DAEMONIZE" = "true" ] ; then
+  if [ "$PIDFILE" = "" ] || [ "$LOGDIR" = "" ] || [ "$ERRORFILE" = "" ] ; then
+    echo "Cannot daemonize without pid file and logdir and boot error file"
+    exit 5
+  fi
+
+  mkdir -p $LOGDIR/console
+  mkdir -p `dirname $PIDFILE`/
+  run_erl -daemon `dirname $PIDFILE`/ $LOGDIR/console "exec /opt/flussonic/bin/erl $BEAM_TUNE \
+    -name $NODE -boot start_sasl -sasl errlog_type error \
+    -s flussonic start $BOOTARGS"
+
+  i=0
+  while [ $i -lt 100 -a ! -f "$PIDFILE" -a ! -f "$ERRORFILE" ] ; do 
+    echo -n "."
+    i=`expr $i + 1`
+    sleep 1
+  done 
+  if [ -f "$PIDFILE" ] ; then
+    echo "done"
+  else 
+    if [ -f "$ERRORFILE" ] ; then
+      echo "failed: `cat $ERRORFILE`"
+      rm -f $ERRORFILE
+      exit 1
+    fi
+  fi
+
+else
+  exec /opt/flussonic/bin/erl $BEAM_TUNE \
+    -name $NODE -boot start_sasl -sasl errlog_type error $ERLARGS \
+    -s flussonic start $BOOTARGS
+fi
+
+

@@ -1,0 +1,11 @@
+{application,cluster,
+             [{description,"cluster"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,corelib,config2,live]},
+              {mod,{cluster_app,[]}},
+              {env,[]},
+              {modules,[cesbo,cluster_api,cluster_app,cluster_ingest,
+                        cluster_peer,cluster_peer_protocol,cluster_servers,
+                        cluster_sup,my_cluster,remote_server,
+                        remote_server_checker,remote_source,remote_source2]}]}.

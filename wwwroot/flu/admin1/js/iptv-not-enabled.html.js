@@ -1,0 +1,3 @@
+if(!window.ng_flussonic_templates) window.ng_flussonic_templates = angular.module('flussonic-templates',[]);window.ng_flussonic_templates.run(['$templateCache', function($templateCache) {
+  $templateCache.put('/flu/html/iptv-not-enabled.html', '<div class="alert alert-danger hidden-xs">\n  <div class="form-group">\n    <span>IPTV module is not enabled in config. Configure it and restart Flussonic.</span>\n  </div>\n</div>\n\n<div class="container">\n  <div class="row">\n    <div class="col-lg-12">\n    <p>Add following to the end of /etc/flussonic/flussonic.conf and restart server:</p>\n<pre>plugin iptv {\n  database sqlite:///opt/flussonic/priv/iptv.db;\n}\n</pre>\n    </div>\n  </div>\n</div>');
+}]);

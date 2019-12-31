@@ -1,0 +1,9 @@
+{application,dynafile,
+             [{description,"dynafile"},
+              {vsn,"1.0"},
+              {registered,[dynafile]},
+              {applications,[stdlib,kernel,vod,transcoder]},
+              {mod,{dynafile,[]}},
+              {env,[]},
+              {modules,[dynafile,dynafile_cache,dynafile_hls,dynafile_sup,
+                        dynafile_www]}]}.

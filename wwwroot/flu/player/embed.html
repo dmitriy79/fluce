@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flussonic Live</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf8">
+    <script type="text/javascript">
+    </script>
+
+    <style type="text/css">
+      #flussonic-player {
+        position:fixed !important;
+        position:absolute;
+        top:0;
+        right:0;
+        bottom:0;
+        left:0;
+        background-color: black;
+      }
+      .dvr-player-wrapper {
+        background-color: black;
+      }
+    </style>
+  <link href="/flu/player/0.47cd2b8b1d719dc762ce.css" rel="stylesheet"><script type="text/javascript" src="/flu/player/runtime.6aa4ec014dc1889e6240.js"></script><script type="text/javascript" src="/flu/player/vendors.9bc0e6fa61d57cc6a020.js"></script><script type="text/javascript" src="/flu/player/main.2f9aa60930b09de62504.js"></script></head>
+  <body>
+    <div id="flussonic-player"></div>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        var options = {
+          parentId: '#flussonic-player',
+          width: '100%',
+          height: '100%',
+        }
+        var config = {{config}};
+        var params = FlussonicPlayer.parseUrl(window.location.href, options, {{config}})
+        window.flussonicPlayer = new FlussonicPlayer(params);
+        document.getElementsByTagName('title')[0].innerHTML = config.streamName;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{application,mosaic,
+             [{description,"mosaic"},
+              {vsn,"1.0"},
+              {registered,[]},
+              {applications,[stdlib,kernel,live,transcoder]},
+              {mod,{mosaic_app,[]}},
+              {env,[]},
+              {modules,[flu_mosaic,mosaic,mosaic_app,mosaic_buffer,mosaic_dbg,
+                        mosaic_file,mosaic_loop,mosaic_sup]}]}.

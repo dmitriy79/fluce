@@ -1,0 +1,10 @@
+{application,h323,
+             [{description,"h323"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,erlmedia]},
+              {mod,{h323_app,[]}},
+              {env,[]},
+              {modules,['H235-SECURITY-MESSAGES','H323-MESSAGES',
+                        'MULTIMEDIA-SYSTEM-CONTROL',h245,h323,h323_app,
+                        h323_proto,h323_sup]}]}.

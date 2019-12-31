@@ -1,0 +1,9 @@
+{application,decklink,
+             [{description,"decklink"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,transcoder]},
+              {mod,{decklink_app,[]}},
+              {env,[]},
+              {modules,[decklink,decklink_app,decklink_node,decklink_sup,
+                        ext_decklink]}]}.

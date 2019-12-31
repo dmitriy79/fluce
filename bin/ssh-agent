@@ -1,0 +1,99 @@
+#!/bin/bash
+
+if [ -z "$NODE" ]; then
+  NODE="ssh-agent@server.l"
+fi
+
+BOOTARGS=""
+ERLARGS=""
+
+
+export ERL_CRASH_DUMP_SECONDS=0
+
+# production defaults
+
+while [ $# -ge 1 ]; do
+  opt="$1"
+  OPTARG="$2"
+  shift
+  case $opt in
+    --help|-h)
+      echo "$0 [-n nodename] [-s server_id_path] [-c config_path] [-l log_dir] [-p pidfile] -d"
+      echo "  -s   default priv/server.id or /etc/flussonic/server.id:  path to server id file"
+      echo "  -c   default priv/flussonic.conf or /etc/flussonic/flussonic.conf:  path to config file"
+      echo "  -l   default /var/log/flussonic:  path to log directory"
+      echo "  -e   endpoint url"
+      echo "  -p   default none:  path to pidfile"
+      echo "  -noinput   disable interactive console for systemd"
+      exit 1
+      ;;
+    --node|-n)
+      NODE=$OPTARG
+      shift
+      ;;
+    --server_id_path|-s)
+      SERVER_ID_PATH="$OPTARG"
+      shift
+      ;;
+    --debug)
+      BOOTARGS="$BOOTARGS debug"
+      ;;
+    --config|-c)
+      BOOTARGS="$BOOTARGS config_path $OPTARG"
+      shift
+      ;;
+    --logs|-l)
+      BOOTARGS="$BOOTARGS log_dir $OPTARG"
+      LOGDIR="$OPTARG"
+      shift
+      ;;
+    --pid|-p)
+      PIDFILE="$OPTARG"
+      shift
+      ;;
+    --endpoint|-e)
+      ENDPOINT="$OPTARG"
+      shift
+      ;;
+    -noinput)
+      ERLARGS="$ERLARGS -noinput"
+      ;;
+    *)
+      echo "Invalid option '$opt' '$OPTARG'"
+      exit 4
+  esac
+done
+
+if [ -d _build/prod/opt/flussonic/lib/ ]; then
+  export ERL_LIBS=_build/prod/opt/flussonic/lib/
+elif [ -d _build/default/lib ]; then
+  export ERL_LIBS=_build/default/lib
+else
+  export ERL_LIBS=/opt/flussonic/lib
+fi
+
+if [ "$PIDFILE" != "" ] && [ -f $PIDFILE ]; then
+  if kill -0 `cat $PIDFILE` 2>/dev/null ; then
+    echo "Seems that ssh-agent is running under pid `cat $PIDFILE`. Stop it first"
+    exit 5
+  fi
+fi
+
+if [ ! -z "$ENDPOINT" ]; then
+  BOOTARGS="$BOOTARGS endpoint $ENDPOINT"  
+fi
+
+if [ ! -z "$PIDFILE" ]; then
+  BOOTARGS="$BOOTARGS pidfile $PIDFILE"
+fi
+
+if [ ! -z "$SERVER_ID_PATH" ]; then
+  BOOTARGS="$BOOTARGS server_id_path $SERVER_ID_PATH"
+fi
+
+if [ -z ${ERL_INETRC+x} ]; then
+  export ERL_INETRC=/opt/flussonic/.inetrc
+fi
+
+exec /opt/flussonic/bin/erl -name $NODE -boot start_sasl -sasl errlog_type error $ERLARGS -s ssh_agent start $BOOTARGS
+

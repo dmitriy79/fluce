@@ -1,0 +1,11 @@
+{application,rtmp2,
+             [{description,"rtmp2"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,rtmp]},
+              {mod,{rtmp2_app,[]}},
+              {env,[]},
+              {modules,[dvr_rtmp,ems_rtmp,ems_rtmp_media_rewrite,
+                        ems_rtmp_play_auth,ems_rtmp_play_normalize,flu_rtmp,
+                        live_rtmp_play,live_rtmp_publish,publish_proxy,
+                        rtmp2_app,rtmp2_sup,rtmp_publish_stress_test]}]}.

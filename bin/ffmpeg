@@ -1,0 +1,9 @@
+#!/bin/sh
+ARCH=`uname -i`
+if [ "$ARCH" = "unknown" ]; then
+  ARCH=`uname -m`
+fi
+APP=`basename $0`
+
+exec "/opt/flussonic/bin/${ARCH}-linux-gnu/${APP}" -hide_banner "$@"
+

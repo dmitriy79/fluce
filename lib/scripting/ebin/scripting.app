@@ -1,0 +1,9 @@
+{application,scripting,
+             [{description,"scripting"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,corelib,luerl]},
+              {mod,{scripting_app,[]}},
+              {env,[]},
+              {modules,[flu_lua,flu_lua_ftp,lua_crypto,lua_mail,lua_sqlite3,
+                        scripting_app,scripting_sup,web_lua_handler]}]}.

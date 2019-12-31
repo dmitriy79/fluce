@@ -1,0 +1,11 @@
+{application,rtmp,
+             [{description,"RTMP handling library"},
+              {vsn,"3.1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,eamf,ranch,ssl]},
+              {mod,{rtmp_app,[]}},
+              {modules,[hmac256,rtmp,rtmp_app,rtmp_bench,rtmp_dump,
+                        rtmp_handshake,rtmp_lib,rtmp_proxy,rtmp_publish,
+                        rtmp_session,rtmp_socket,rtmp_stat_collector,
+                        rtmp_stream,rtmp_sup,rtmp_tcp,rtmpe,sha2,
+                        shared_object,shared_objects]}]}.

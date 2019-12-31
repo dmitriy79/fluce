@@ -1,0 +1,12 @@
+{application,transcoder,
+             [{description,"transcoder"},
+              {vsn,"4.2"},
+              {registered,[]},
+              {applications,[stdlib,kernel,erlmedia,events]},
+              {mod,{transcoder_app,[]}},
+              {env,[]},
+              {modules,[avcodec,dedicoder,draw_alphabet,fake_stream,
+                        jpeg_thumbnail,nvenc,qsv,slavecoder,thumbnailer_node,
+                        transcoder,transcoder_app,transcoder_launch_manager,
+                        transcoder_master_monitor,transcoder_slave,
+                        transcoder_stats,transcoder_sup]}]}.

@@ -1,0 +1,6 @@
+cowboy, MIT https://github.com/extend/cowboy/blob/master/LICENSE
+goldrush MIT https://github.com/extend/goldrush/blob/master/LICENSE
+lager Apache https://github.com/basho/lager/blob/master/LICENSE
+lhttpc MIT https://github.com/esl/lhttpc/blob/master/LICENCE
+mimetypes MIT https://github.com/spawngrid/mimetypes/blob/master/LICENSE
+ranch MIT https://github.com/extend/ranch/blob/master/LICENSE

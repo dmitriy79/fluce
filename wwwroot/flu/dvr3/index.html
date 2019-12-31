@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flussonic DVR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf8" />
+    <script type="text/javascript"></script>
+
+    <style type="text/css">
+      #dvr-player {
+        position: fixed !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: black;
+      }
+      .dvr-player-wrapper {
+        background-color: black;
+      }
+    </style>
+  <link href="/flu/dvr3/0.56e54897db527a6be5f3.css" rel="stylesheet"><script type="text/javascript" src="/flu/dvr3/runtime.def3359195ea30b7864d.js"></script><script type="text/javascript" src="/flu/dvr3/vendors.7fc29a2a265ce6440bc2.js"></script><script type="text/javascript" src="/flu/dvr3/main.037167ec2afa8558cc15.js"></script></head>
+  <body>
+    <div id="dvr-player"></div>
+    <div id="forTimeline"></div>
+
+    <script type="text/javascript">
+      var flussonicDvrPlayerOptions = {
+        name: '{{streamName}}',
+        streamer_http: window.location.protocol + '//' + window.location.host,
+        streamer_rtmp: 'rtmp://' + window.location.hostname + ':1935/static/',
+        auth_token_name: '{{authTokenName}}',
+        query: window.location.search.replace(/^\?/, ''),
+      };
+
+      window.onload = function() {
+        DvrPlayer.default.load(
+          flussonicDvrPlayerOptions,
+          document.getElementById('dvr-player'),
+          document.getElementById('forTimeline')
+        );
+        document.getElementsByTagName('title')[0].innerHTML =
+        flussonicDvrPlayerOptions.name;
+      };
+    </script>
+  </body>
+</html>

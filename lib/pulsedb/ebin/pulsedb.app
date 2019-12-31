@@ -1,0 +1,13 @@
+{application,pulsedb,
+             [{description,"Statistics collect database"},
+              {vsn,"0.7"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{pulsedb_app,[]}},
+              {env,[]},
+              {modules,[pulsedb,pulsedb_app,pulsedb_appender,pulsedb_blobs,
+                        pulsedb_collector,pulsedb_data,pulsedb_netpush,
+                        pulsedb_parser,pulsedb_query,pulsedb_reader,
+                        pulsedb_realtime,pulsedb_sup,pulsedb_time,
+                        pulsedb_wal_restore,pulsedb_wal_writer,pulsedb_writer,
+                        query_lexer,query_parser]}]}.

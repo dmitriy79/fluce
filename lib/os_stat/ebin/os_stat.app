@@ -1,0 +1,11 @@
+{application,os_stat,
+             [{description,"os_stat"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{os_stat_app,[]}},
+              {env,[]},
+              {modules,[os_stat_app,os_stat_cpu_disk,os_stat_disk,
+                        os_stat_jetson,os_stat_mem,os_stat_net,os_stat_nvidia,
+                        os_stat_proc,os_stat_storage,os_stat_sup,
+                        os_stat_udp_drops]}]}.

@@ -1,0 +1,12 @@
+{application,chassis,
+             [{description,"chassis"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,events,cowboy,lhttpc,tftp]},
+              {mod,{chassis_app,[]}},
+              {env,[]},
+              {modules,[chassis,chassis_api,chassis_app,chassis_blinker,
+                        chassis_coder,chassis_coder_watcher,chassis_control,
+                        chassis_dhcp_proto,chassis_dhcpd,chassis_http_api,
+                        chassis_lcd,chassis_node_watcher,chassis_ntpd,
+                        chassis_sup,chassis_tftp2]}]}.

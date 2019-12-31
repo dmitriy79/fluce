@@ -1,0 +1,4 @@
+{streamsTable, {snmp_generic, table_func, [streamsTable]}}.
+{streamsNum ,   {snmp2, streams_num,    []}}.
+{totalClients,  {snmp2, total_clients,  []}}.
+{schedulerLoad, {snmp2, scheduler_load, []}}.

@@ -1,0 +1,10 @@
+{application,sqlapi,
+             [{description,"sqlapi"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{sqlapi_app,[]}},
+              {env,[]},
+              {modules,[my_datatypes,my_packet,my_protocol,my_ranch_worker,
+                        nanomysql,sql92,sql92_parser,sql92_scan,sql_ets_api,
+                        sqlapi,sqlapi_app,sqlapi_ram_table,sqlapi_sup]}]}.

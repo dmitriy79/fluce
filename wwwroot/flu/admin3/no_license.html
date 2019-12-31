@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flussonic Media Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<link href="/flu/admin3/2.cd218e7527b89124aaf5.css" rel="stylesheet"><link href="/flu/admin3/0.e993034f0238330d9655.css" rel="stylesheet"></head>
+<body>
+
+<style type="text/css">
+.hidden {
+  display: none;
+}
+.hiding {
+  height: 0;
+  opacity: 0;
+  transition: all .3s ease-in-out;
+}
+.spinner-img { width: 150px; height: 150px; animation: spin 1.3s linear infinite; }
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}  
+}
+
+#mainpanel {
+  margin-top: 100px;
+}
+</style>
+
+<div id="mainpanel" class="base-container">
+  <div class="left-container"></div>
+  <div class="center-container2">
+    <div class="head-text">Flussonic license key</div>
+
+    <div class="row-height"></div>
+
+    <div class="row-height flex-end">
+      <div class="notice-text">Flussonic requires license key. Please enter here your license key and it will be added to <code>/etc/flussonic/license.txt</code></div>
+    </div>
+
+    <form action="/license" method="post" id="license-form">
+      <div class="row-height flex-end">
+        <label for="login-input" class="margin-right-10 notice-text" style="min-width: 80px">License key:</label>
+        <div class="form-input"><input type="text" name="key" id="key-input" style="min-width: 350px" /></div>
+      </div>
+
+      <div class="row-height flex-end notice-text">
+        <div>Also you may change your login and password:</div>
+      </div>
+
+      <div class="flex-end row-height">
+        <label for="login-input" class="margin-right-10 notice-text" style="min-width: 80px">Login:</label>
+        <div class="form-input"><input type="text" name="login" id="login-input" /></div>
+      </div>
+
+      <div class="flex-end row-height">
+        <label for="password-input" class="margin-right-10 notice-text" style="min-width: 80px">Password:</label>
+        <div class="form-input"><input type="text" name="password" id="password-input" /></div>
+      </div>
+
+      <div class="row-height flex-end">
+        <button type="submit" class="rect filled action-button">
+          Activate Flussonic
+        </button>
+        <div class="margin-left-10 error-text"><div id="license-error-text" class="hidden"></div></div>
+      </div>
+    </form>
+
+
+
+    <div id="spinner-loader" class="hidden">
+      <svg class='spinner-img' style="margin: auto; width: 150px; display:block">
+        <path d="M 140,75 A 65,65 0 1 1 121,29" style="fill:none;stroke:#001e8d;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;" />
+      </svg>
+    </div>
+
+    <div id="license-loaded-ok" class="hidden">
+      <p>Your license key is accepted, wait while we are restarting Flussonic</p>
+    </div>
+
+    <div id="license-load-error" class="hidden">
+      <div class="row-height flex-end">
+        <div>Your license key was not accepted, read description below:</div>
+      </div>
+      
+      <div class="row-height flex-end">
+        <div id="license-error-code"></div>
+        <div id="license-error-description" class="error-text margin-left-10">1111</div>
+      </div>
+    </div>
+
+    <div id="flussonic-is-rebooting" class="hidden">
+      <p>Flussonic is rebooting now</p>
+    </div>
+
+    <div id="flussonic-reboot-error" class="hidden">
+      <p>Failed to autorestart Flussonic, please do it manually from console</p>
+    </div>
+
+  </div>
+  <div class="right-container"></div>
+</div>
+
+<script type="text/javascript">
+var reboot_key = "" + (new Date()).getTime();
+var reboot_token = undefined;
+
+var login = "flussonic";
+var password = "letmein!";
+
+var states = {
+  "awaiting-input": [],
+  "input-error": ["license-error-text"],
+  "checking-license": ["spinner-loader"],
+  "license-check-error": ["license-load-error"],
+  "license-loaded": ["license-loaded-ok"],
+  "flussonic-rebooting": ["license-loaded-ok", "flussonic-is-rebooting"],
+  "flussonic-reboot-error": ["flussonic-reboot-error"]
+};
+
+function transition(state) {
+  var all_classes = {};
+  for(var k in states) {
+    for(var j in states[k]) all_classes[states[k][j]] = true;
+  }
+  for(var j in states[state]) {
+    delete all_classes[states[state][j]];
+  }
+  for(var k in all_classes) {
+    document.getElementById(k).className = "hiding";
+  }
+  for(var k in states[state]) {
+    document.getElementById(states[state][k]).className = "";
+  }
+}
+
+function configureInput() {
+  var form = document.getElementById("license-form");
+  document.getElementById("login-input").value = login;
+  document.getElementById("password-input").value = password;
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    var new_license = document.getElementById("key-input").value;
+
+    if(!new_license || new_license.length < 15) return indicateLicenseError("too short");
+    if(new_license.indexOf("l4|") != 0 || new_license.indexOf(" ") != -1) return indicateLicenseError("license is invalid");
+    transition("awaiting-input");
+    var options = {
+      license: new_license,
+      login: document.getElementById("login-input").value,
+      password: document.getElementById("password-input").value
+    };
+    tryLicenseKey(options);
+    return false;
+  });
+}
+
+function indicateLicenseError(message) {
+  document.getElementById("license-error-text").innerHTML = message;
+  transition("input-error");
+  return false;
+}
+
+function tryLicenseKey(options) {
+  transition("checking-license");
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/license");
+  xhr.timeout = 60000;
+  xhr.setRequestHeader("Cache-Control", "no-cache");
+  xhr.setRequestHeader("Accept", "application/json");
+  xhr.setRequestHeader('Content-Type', 'text/plain');
+  xhr.setRequestHeader('X-Secure-Key', reboot_key);
+  xhr.onreadystatechange = function() {
+    if(xhr.readyState != 4) {
+      return;
+    }
+    if(xhr.status == 201) {
+      transition("license-loaded");
+      reboot_token = xhr.responseText;
+      setTimeout(function() {
+        requestFlussonicReboot(reboot_token);  
+      }, 200);
+    } else {
+      document.getElementById("license-error-code").innerHTML = "" + xhr.status;
+      document.getElementById("license-error-description").innerHTML = "" + xhr.responseText;
+      transition("license-check-error");
+    }
+  }
+  xhr.send(JSON.stringify(options));
+}
+
+
+function requestFlussonicReboot(token) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/reboot");
+  xhr.setRequestHeader("Cache-Control", "no-cache");
+  xhr.setRequestHeader('X-Secure-Key', reboot_key);
+  xhr.setRequestHeader('X-Secure-Token', reboot_token);
+  transition("flussonic-rebooting");
+  xhr.onreadystatechange = function() {
+    if(xhr.readyState != 4) {
+      return;
+    }
+    if(xhr.status == 201) {
+    } else {
+      transition("flussonic-reboot-error");
+    }
+    setTimeout(function() {
+      document.location.href = "/";
+    }, 200);
+  }
+  xhr.send();
+}
+
+document.addEventListener("DOMContentLoaded", configureInput);
+</script>
+
+
+<script type="text/javascript" src="/flu/admin3/runtime.3c37f4aaf64ab22d1683.js"></script><script type="text/javascript" src="/flu/admin3/vendors.a26e1852f671b821d8e8.js"></script><script type="text/javascript" src="/flu/admin3/main.e709e0e89b6d3f9d19cc.js"></script></body>
+</html>

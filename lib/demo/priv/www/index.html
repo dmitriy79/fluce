@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flussonic Demo</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap-3.3.7.min.css">
+  <link rel="stylesheet" href="bootstrap-theme-3.3.7.min.css">
+  <script src="vue-2.3.4.js"></script>
+  <script src="hls-0.7.10.js"></script>
+  <script src="demo.js"></script>
+</head>
+
+<body>
+
+<div class="container" id="app">
+  <div class="row">
+    <div class="col-sm-8"><h1>Flussonic demo</h1></div>
+
+    <div class="col-sm-4">
+      <video id="player" style="width: 100%; min-height: 270px;" controls></video>
+      <span>{{play_url}}</span>
+    </div>
+
+  </div>
+
+  <template v-if="loaded">
+
+  <!-- cluster ingest -->
+  <div class="row">
+    <div class="col-sm-12"><h2>Cluster ingest demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in cluster_ingest" class="col-sm-2">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+
+          <h4>Streams:</h4>
+          <ul>
+            <li v-if="stream.name != 'fake'" v-for="stream in srv.config.streams2">
+              <a v-if="stream.stats.alive" href='#' v-on:click.prevent="play(srv,stream.name)">{{stream.name}}</a>
+            </li>
+          </ul>
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <!-- /cluster ingest -->
+
+  <!-- cluster dvr -->
+  <div class="row">
+    <div class="col-sm-12"><h2>Cluster DVR demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in cluster_dvr" class="col-sm-2">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+          <br>
+          Clients: {{srv.config.stats.total_clients}}
+          <br>
+          Streams ({{srv.config.stats.online_streams}}):
+          <ul>
+            <li v-for="s in srv.config.streams2">
+              <a href='#' v-on:click.prevent="play(srv,s.name)">{{s.name}}</a>
+            </li>
+          </ul>
+
+
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /cluster dvr -->
+
+  <!-- cluster dvr replication-->
+  <div class="row">
+    <div class="col-sm-12"><h2>Cluster DVR replication demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in cluster_dvr_replicate" class="col-sm-2">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+          <br>
+          Clients: {{srv.config.stats.total_clients}}
+          <br>
+          Streams ({{srv.config.stats.online_streams}}):
+          <ul>
+            <li v-for="s in srv.config.streams2">
+              <a href='#' v-on:click.prevent="play(srv,s.name)">{{s.name}}</a>
+            </li>
+          </ul>
+
+
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /cluster dvr replication -->
+
+  <!-- agent -->
+  <div class="row">
+    <div class="col-sm-12"><h2>Flussonic Agent demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in agent_service" class="col-sm-3">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+
+          <template v-if="srv.name=='as_camera'">
+            <br>
+            <span class="label label-success" v-if='srv.agent_alive_erl'>Agent 1 connected</span>
+            <span class="label label-danger" v-else>Agent 1 not connected</span>
+            <br>
+            <span class="label label-success" v-if='srv.agent_alive_native'>Agent 2 connected</span>
+            <span class="label label-danger" v-else>Agent 2 not connected</span>
+          </template>
+
+
+          <template v-if="srv.name=='as_streamer'">
+            <h3>Streams</h3>
+            <table class='table'>
+              <tr v-for="s in srv.config.streams2" v-bind:class="{ isActive: s.stats.alive, hasError: !s.stats.alive }">
+                <td><a href='#' v-on:click.prevent="play(srv,s.name)">{{s.name}}</a></td><td>{{s.stats.alive ? "alive" : s.stats.source_error}}</td>
+              </tr>
+            </table>
+          </template>
+
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /agent -->
+
+  <!-- loadbalancer -->
+  <div class="row">
+    <div class="col-sm-12"><h2>Load balancer demo</h2></div>
+  </div>
+  <div class="row">
+      <div class="col-sm-2">
+        <div class="panel panel-default instance-panel">
+          <div class="panel-heading">Test load</div>
+          <div class="panel-body">
+            <template v-if="loadbalancer_master.alive">
+              <div>
+                <button type="button" class="btn btn-danger" v-on:click.prevent="stop('lb_master')">Stop LB</button>
+              </div>
+              <div>
+                Clients: {{loadbalancer_master.stress_client_count}}
+                <br>
+                <button type="button" class="btn btn-danger" v-on:click="command('lb_master','add_clients', {count: 10})">Add 10</button>
+                <button type="button" class="btn btn-success" v-on:click="command('lb_master','add_clients', {count: -10})">Remove 10</button>
+                <button type="button" class="btn btn-default" v-on:click="playUrl('http://lb_master.local:5140/fake/index.m3u8?token='+(new Date()).getTime())">Play</button>
+              </div>
+            </template>
+            <template v-else>
+              <div>
+                <button type="button" class="btn btn-success" v-on:click.prevent="launch('lb_master')">Start LB</button>
+                <br>
+                <span class="label label-default">{{loadbalancer_master.status}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="loadbalancer_master.alive" v-for="srv in loadbalancers" class="col-sm-2">
+        <div class="panel panel-default instance-panel">
+          <div class="panel-heading">{{srv.name}}</div>
+          <div v-if="srv.alive" class="panel-body">
+            <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+            <br>
+            Usage: {{srv.config.stats.bandwidth_usage}}%
+            <br>
+            Bitrate: {{srv.config.stats.output_kbit}} kbps
+            <br>
+            Clients: {{srv.config.stats.total_clients}}
+            <br>
+            <div style="width: 40px; height: 100px; border: 1px black solid; position: relative;">
+              <div v-bind:style="'width: 100%; height: '+(srv.config.stats.bandwidth_usage)+'%; background: blue; position: absolute; bottom: 0;'"></div>
+            </div>
+
+          </div>
+          <div v-else class="panel-body">
+            <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+            <br>
+            <span class="label label-default">{{srv.status}}</span>
+          </div>
+        </div>
+      </div>  
+  </div>
+  <!-- /loadbalancer -->
+
+  <!-- cluster redirect-->
+  <div class="row">
+    <div class="col-sm-12"><h2>Cluster redirect demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in cluster_redirect" class="col-sm-2">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+          <br>
+          Clients: {{srv.config.stats.total_clients}}
+          <br>
+          Streams ({{srv.config.stats.online_streams}}):
+          <ul>
+            <li v-for="s in srv.config.streams2">
+              <a href='#' v-on:click.prevent="play(srv,s.name)">{{s.name}}</a>
+            </li>
+          </ul>
+
+
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /cluster redirect -->
+
+  <!-- play push-->
+  <div class="row">
+    <div class="col-sm-12"><h2>Play push demo</h2></div>
+  </div>
+
+  <div class="row">
+    <div v-for="srv in play_push" class="col-sm-2">
+      <div class="panel panel-default instance-panel">
+        <div class="panel-heading">{{srv.name}}</div>
+        <div v-if="srv.alive" class="panel-body">
+          <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+          <br>
+          Clients: {{srv.config.stats.total_clients}}
+          <br>
+          Streams ({{srv.config.stats.online_streams}}):
+          <ul>
+            <li v-for="s in srv.config.streams2">
+              <a href='#' v-on:click.prevent="play(srv,s.name)">{{s.name}}</a>
+            </li>
+          </ul>
+
+
+        </div>
+        <div v-else class="panel-body">
+          <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+          <br>
+          <span class="label label-default">{{srv.status}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /play push -->
+
+
+
+  <!-- publish demo -->
+  <div class="row">
+    <div class="col-sm-12"><h2>Publish balancer demo</h2></div>
+  </div>
+  <div class="row">
+      <div class="col-sm-2">
+        <div class="panel panel-default instance-panel">
+          <div class="panel-heading">Test load</div>
+          <div class="panel-body">
+            <template v-if="pub_source.alive">
+              <div>
+                <button type="button" class="btn btn-danger" v-on:click.prevent="stop('pub_source')">Stop LB</button>
+              </div>
+              <div>
+                Clients: {{pub_source.stress_client_count}}
+                <br>
+                <button type="button" class="btn btn-danger" v-on:click="command('pub_source','add_clients', {count: 3})">Add 3</button>
+                <button type="button" class="btn btn-success" v-on:click="command('pub_source','add_clients', {count: -3})">Remove 3</button>
+                <button type="button" class="btn btn-default" v-on:click="playUrl('http://pub_source.local:5541/fake/index.m3u8?token='+(new Date()).getTime())">Play</button>
+              </div>
+            </template>
+            <template v-else>
+              <div>
+                <button type="button" class="btn btn-success" v-on:click.prevent="launch('pub_source')">Start publisher</button>
+                <br>
+                <span class="label label-default">{{pub_source.status}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="pub_source.alive" v-for="srv in publish_servers" class="col-sm-2">
+        <div class="panel panel-default instance-panel">
+          <div class="panel-heading">{{srv.name}}</div>
+          <div v-if="srv.alive" class="panel-body">
+            <button type="button" class="btn btn-danger" v-on:click.prevent="stop(srv.name)">Stop</button>
+            <br>
+            Usage: {{srv.config.stats.cpu_usage}}%
+            <br>
+            Bitrate: {{srv.config.stats.input_kbit}} kbps
+            <br>
+            Streams: {{srv.config.stats.online_streams}}
+            <br>
+            <div style="width: 40px; height: 100px; border: 1px black solid; position: relative;">
+              <div v-bind:style="'width: 100%; height: '+(srv.config.stats.cpu_usage)+'%; background: blue; position: absolute; bottom: 0;'"></div>
+            </div>
+
+          </div>
+          <div v-else class="panel-body">
+            <button type="button" class="btn btn-success" v-on:click.prevent="launch(srv.name)">Start</button>
+            <br>
+            <span class="label label-default">{{srv.status}}</span>
+          </div>
+        </div>
+      </div>  
+  </div>
+  <!-- /publish demo -->
+
+
+  </template>
+  <template v-else>
+    <div class="row">
+      <div class="col-sm-6 class-sm-offset-3">
+        <h3>Loading</h3>
+        <div class="loader"></div>
+      </div>
+    </div>
+  </template>
+
+</div>
+
+
+<script type="text/javascript">
+'use strict';
+
+var data = {
+  loaded: false,
+  play_url: "",
+  cluster_ingest: [],
+  cluster_dvr: [],
+  cluster_dvr_replicate: [],
+  cluster_redirect: [],
+  agent_service: [],
+  play_push: [],
+  loadbalancer_master: null,
+  loadbalancers: [],
+  pub_source: null,
+  publish_servers: [],
+};
+
+
+var app = loadApp(data);
+
+
+function load_instances(cb) {
+  fetch("/demo/api/instances", {method: "get", credentials: 'same-origin'}).then(function(response) {
+    return response.json()
+  }).then(function(reply) {
+    data.loaded = true;
+    data.cluster_ingest = reply.filter(function(r) {return r.tags.includes("cluster_ingest")});
+    data.cluster_dvr = reply.filter(function(r) {return r.tags.includes("cluster_dvr")});
+    data.cluster_dvr_replicate = reply.filter(function(r) {return r.tags.includes("cluster_dvr_replicate")});
+    data.cluster_redirect = reply.filter(function(r) {return r.tags.includes("cluster_redirect")});
+    data.agent_service = reply.filter(function(r) {return r.tags.includes("agent_service")});
+    data.play_push = reply.filter(function(r) {return r.tags.includes("play_push")});
+    data.loadbalancers = reply.filter(function(r) {return (r.tags.includes("loadbalancer") && r.name != 'lb_master')});
+    data.loadbalancer_master = reply.filter(function(r) {return r.name == 'lb_master'})[0];
+
+    data.publish_servers = reply.filter(function(r) {return (r.tags.includes("publish") && r.name != 'pub_source')});
+    data.pub_source = reply.filter(function(r) {return r.name == 'pub_source'})[0];
+    if(cb) cb();
+  }).catch(function(e) {
+    console.log(e);
+    if(cb) cb();
+  });
+}
+
+function periodically_load_instances() {
+  var cb = function() {
+    setTimeout(periodically_load_instances, 2000);  
+  }
+  load_instances(cb);
+}
+
+periodically_load_instances();
+
+</script>
+
+</body>
+</html>

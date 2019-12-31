@@ -1,0 +1,13 @@
+{application,corelib,
+             [{description,"corelib"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,gen_tracker,jsx,parsexml,lhttpc,
+                             events]},
+              {mod,{corelib_app,[]}},
+              {env,[]},
+              {modules,[binutils,corelib,corelib_app,corelib_fraction,
+                        corelib_sup,flu_hex,flu_ssl_cache_null,flu_xmerl_lib,
+                        flu_xmerl_scan,global_status,http_uri2,minute,
+                        otp_compat_transform,raw_file,sendmail,systemd,uuid,
+                        weak_call,win16]}]}.

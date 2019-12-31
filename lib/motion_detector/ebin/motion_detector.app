@@ -1,0 +1,10 @@
+{application,motion_detector,
+             [{description,"Flussonic Motion Detector"},
+              {vsn,"1.0"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{motion_detector_app,[]}},
+              {env,[]},
+              {modules,[camera_alarm,camera_alarm_rproxy,motion_detector,
+                        motion_detector_app,motion_detector_onvif,
+                        motion_detector_sup,motion_detector_worker]}]}.

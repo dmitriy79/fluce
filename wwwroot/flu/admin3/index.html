@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+  <title>Flussonic Admin UI</title>
+<link href="/flu/admin3/2.cd218e7527b89124aaf5.css" rel="stylesheet"><link href="/flu/admin3/0.e993034f0238330d9655.css" rel="stylesheet"></head>
+<body>
+<div id="adminpanel"></div>
+<script type="text/javascript">
+window.onload = function() {
+  FlussonicAdmin.default.load(document.getElementById("adminpanel"),
+    {token: '{{admin_auth_token}}', query: window.location.search.replace(/^\?/,'')});
+}
+</script>
+<script type="text/javascript" src="/flu/admin3/runtime.3c37f4aaf64ab22d1683.js"></script><script type="text/javascript" src="/flu/admin3/vendors.a26e1852f671b821d8e8.js"></script><script type="text/javascript" src="/flu/admin3/main.e709e0e89b6d3f9d19cc.js"></script></body>
+</html>

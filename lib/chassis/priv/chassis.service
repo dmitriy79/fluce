@@ -1,0 +1,24 @@
+[Unit]
+Description=Chassis
+Requires=flussonic-epmd.service
+
+[Service]
+Type=notify
+User=root
+Group=root
+LimitNOFILE=204800
+ExecStartPre=/bin/mkdir -p /var/run/flussonic
+ExecStartPre=/bin/mkdir -p /var/log/chassis
+ExecStart=/opt/flussonic/lib/chassis/priv/chassis.sh -noinput
+ExecReload=/opt/flussonic/lib/chassis/priv/control.sh reload
+ExecStop=/opt/flussonic/lib/chassis/priv/control.sh stop
+Restart=on-failure
+TimeoutStartSec=300s
+WatchdogSec=120
+WorkingDirectory=/opt/flussonic
+NotifyAccess=main
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target
+

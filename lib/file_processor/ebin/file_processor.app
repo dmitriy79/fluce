@@ -1,0 +1,9 @@
+{application,file_processor,
+             [{description,"file_processor"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,erlmedia,cowboy]},
+              {mod,{file_processor,[]}},
+              {env,[]},
+              {modules,[file_processor,file_processor_web,
+                        file_processor_worker]}]}.

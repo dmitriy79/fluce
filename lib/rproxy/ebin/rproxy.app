@@ -1,0 +1,12 @@
+{application,rproxy,
+             [{description,"rproxy"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib,cowboy]},
+              {mod,{rproxy_app,[]}},
+              {env,[]},
+              {modules,[activate_cam_handler,endpoint_api_handler,
+                        endpoint_handler,peeklio,peeklio_c,rproxy,rproxy_app,
+                        rproxy_mdns,rproxy_sup,streampoint_control_handler,
+                        streampoint_data_handler,streampoint_forward_handler,
+                        streampoint_proxy_handler]}]}.

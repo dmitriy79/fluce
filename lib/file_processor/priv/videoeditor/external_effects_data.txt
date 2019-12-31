@@ -1,0 +1,117 @@
+[
+  {
+    "type": "range",
+    "group": "crop",
+    "id": 6629,
+    "start": 1000,
+    "end": 9100,
+    "className": "crop",
+    "content": "Вырезка<div class=\"vis-item-tr\">00:00:01.000 - 00:00:09.100</div>",
+    "position": false
+  },
+  {
+    "type": "range",
+    "group": "overlay",
+    "id": 7077,
+    "start": 23000,
+    "end": 38000,
+    "className": "overlay",
+    "content": "Наложение<div class=\"vis-item-tr\">00:00:23.000 - 00:00:38.000</div>",
+    "position": {
+      "x1": 62,
+      "x2": 189,
+      "y1": 0,
+      "y2": 360
+    }
+  },
+  {
+    "type": "range",
+    "group": "overlay",
+    "id": 7196,
+    "start": 28000,
+    "end": 49000,
+    "className": "overlay",
+    "content": "Наложение<div class=\"vis-item-tr\">00:00:28.000 - 00:00:49.000</div>",
+    "position": {
+      "x1": 0,
+      "x2": 292,
+      "y1": 77,
+      "y2": 154
+    }
+  },
+  {
+    "type": "range",
+    "group": "crop",
+    "id": 8263,
+    "start": 47000,
+    "end": 50300,
+    "className": "crop",
+    "content": "Вырезка<div class=\"vis-item-tr\">00:00:47.000 - 00:00:50.300</div>",
+    "position": false
+  },
+  {
+    "type": "range",
+    "group": "overlay",
+    "id": 8487,
+    "start": 42000,
+    "end": 54000,
+    "className": "overlay",
+    "content": "Наложение<div class=\"vis-item-tr\">00:00:42.000 - 00:00:54.000</div>",
+    "position": {
+      "x1": 402,
+      "x2": 498,
+      "y1": 14,
+      "y2": 321
+    }
+  },
+  {
+    "type": "range",
+    "group": "crop",
+    "id": 8724,
+    "start": 43000,
+    "end": 45900,
+    "className": "crop",
+    "content": "Вырезка<div class=\"vis-item-tr\">00:00:43.000 - 00:00:45.900</div>",
+    "position": false
+  },
+  {
+    "type": "range",
+    "group": "crop",
+    "id": 8754,
+    "start": 21700,
+    "end": 29800,
+    "className": "crop",
+    "content": "Вырезка<div class=\"vis-item-tr\">00:00:21.700 - 00:00:29.800</div>",
+    "position": false
+  },
+  {
+    "type": "range",
+    "group": "overlay",
+    "id": 9606,
+    "start": 4000,
+    "end": 14600,
+    "className": "overlay",
+    "content": "Наложение<div class=\"vis-item-tr\">00:00:04.000 - 00:00:14.600</div>",
+    "position": {
+      "x1": 62,
+      "x2": 579,
+      "y1": 10,
+      "y2": 200
+    }
+  },
+  {
+    "type": "range",
+    "group": "overlay",
+    "id": 9852,
+    "start": 11000,
+    "end": 26000,
+    "className": "overlay",
+    "content": "Наложение<div class=\"vis-item-tr\">00:00:11.000 - 00:00:26.000</div>",
+    "position": {
+      "x1": 62,
+      "x2": 640,
+      "y1": 262,
+      "y2": 360
+    }
+  }
+]

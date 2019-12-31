@@ -1,0 +1,6 @@
+mpeg2coder
+avcodec.so
+jpeg.so
+nvenc.so
+qsv.so
+avmpegts.so

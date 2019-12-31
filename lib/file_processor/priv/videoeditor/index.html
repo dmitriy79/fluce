@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Video Editor Prototype</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/video.js.min.css">
+        <link rel="stylesheet" href="css/vis.min.css">
+        <link rel="stylesheet" href="css/ion.rangeSlider.min.css">
+        <link rel="stylesheet" href="css/ion.rangeSlider.skinModern.min.css">
+        <link rel="stylesheet" href="css/main.min.css">
+        <link rel="stylesheet" href="css/main.ext.css">
+        <link rel="stylesheet" href="css/jquery-ui.min.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body class="vep">
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="vep-info">
+            <div class="vep-info-project">
+                <div class="project-title">
+                    <p>
+                        <span>Номер дела:</span>
+                        <span class="title">не указано</span>
+                    </p>
+                    <p>
+                        <span>Дата заседания: </span>
+                        <span class="date">не указано</span>
+                    </p>
+                </div>
+                <div class="project-video">
+                    <span class="project-video-title" >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17">
+                            <path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"></path>
+                        </svg>
+                        <span>Выбор видео-файла:</span>
+                    </span>
+                    <select id="project_video_items" autocomplete="off" style="opacity: 0;" >
+                        <option selected value="">-- не выбран --</option>
+                        <option value="http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4">Big buck bunny</option>
+                        <option value="http://easyhtml5video.com/assets/video/new/Penguins_of_Madagascar.m4v">Penguins</option>
+                        <option value="http://media.w3.org/2010/05/sintel/trailer.webm">Sintel Teaser</option>
+                        <option value="http://media.w3.org/2010/05/video/movie_300.webm">Test Movie</option>
+                    </select>
+                </div>
+                <div class="project-file-properties" style="display: none">
+                    <span class="prop-title">
+                        Свойства видео:
+                    </span>
+                    <div class="prop-container">
+                        <table>
+                            <tr><td colspan="2">Источник:</td>
+                            </tr>
+                            <tr><td colspan="2"><span id="vep_video_source" class="prop-source-src"></span></td>
+                            </tr>
+                            <tr><td>ширина кадра</td>
+                                <td><span id="vep_video_source_width"></span> px</td>
+                            </tr>
+                            <tr><td>высота кадра</td>
+                                <td><span id="vep_video_source_height"></span> px</td>
+                            </tr>
+                            <tr><td>длительность</td>
+                                <td><span id="vep_video_source_duration"></span> ceк</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-filters">
+                    <span class="filter-title">
+                        Добавление эффекта
+                    </span>
+                    <div class="filter-container" style="opacity: 0;">
+                        <ul class="filter-nav">
+                            <li id="filter_tab_crop"    class="nav-item active" target="crop">Вырезка</li>
+                            <li id="filter_tab_overlay" class="nav-item" target="overlay">Наложение</li>
+                            <li id="filter_tab_mute"    class="nav-item" target="mute">Отключение звука</li>
+                        </ul>
+                        <div class="filter-time-range">
+                            <div class="filter-option-title">
+                                Время действия:
+                            </div>
+                            <input id="effects_time_range">
+                            <div class="filter-option-comment">
+                                Установите интервал ориентировочно. Вы сможете настроить его более точно позднее на таймлайне.
+                            </div>
+                        </div>
+                        <div class="filter-panes">
+                            <div class="pane" style="display: block;" id="filter_pane_crop">
+                                <div class="filter-btn"><span id="filter_crop_add_btn">Добавить вырезку</span></div>
+                            </div>
+                            <div class="pane" id="filter_pane_mute">
+                                <div class="filter-btn"><span id="filter_mute_add_btn">Добавить отключение звука</span></div>
+                            </div>
+                            <div class="pane" id="filter_pane_overlay">
+                                <div class="filter-option-title">
+                                    Положение в кадре (по ширине слева):
+                                </div>
+                                <input id="effects_position_x">
+                                <div class="filter-option-title">
+                                    Положение в кадре (по высоте сверху):
+                                </div>
+                                <input id="effects_position_y">
+                                <div class="filter-btn"><span id="filter_overlay_add_btn">Добавить наложение</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vep-info-player">
+                <video id="vep_app_player" class="video-js vjs-default-skin vep-player" >
+                </video>
+                <div class="vep-player-not-initialized">
+                    <span>Ожидание загрузки данных</span>
+                </div>
+                <div class="vep-player-effects-container" id="vep_player_effects_container">
+                    <div class="overlay-item-tester" id="vep_player_effects_tester"></div>
+                </div>
+                <div class="vep-info-player-controls">
+                    <div class="track-bar"></div>
+                    <div class="buttons">
+                        <div id="vep_player_current_time" class="time">00:00:00.000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="vep_timeline" class="vep-timeline">
+        </div>
+        <div class="vep-data-container">
+            <ul class="btn-block">
+                <li class="btn" id="external_data_start_btn" style="display: none;">Старт</li>
+                <li class="btn" id="external_data_save_btn" style="display: none;">Сохранить данные</li>
+                <li class="btn" id="external_data_cancel_btn">Отменить</li>
+            </ul>
+        </div>
+
+        <div class="vep-modal hidden">
+            <h1>
+                <a href='' target="_blank" class='vep-modal-title'>NAME</a>
+                <span class='vep-modal-close'>X</span>
+                <progress class="vep-modal-progress" value="0" max="100"/>
+            </h1>
+            <div class="vep-modal-video-container">
+                <video class='vep-modal-video' controls style="display: none"></video>
+            </div>
+        </div>
+
+        <script src="js/vendor/jquery-1.12.0.min.js"></script>
+        <script src="js/vendor/jquery-ui-resize-1.11.4.min.js"></script>
+        <script src="js/vendor/ie8/videojs.ie8.5.7.1.min.js"></script>
+        <script src="js/vendor/videojs.5.7.1.min.js"></script>
+        <script>videojs.options.flash.swf = "js/vendor/videojs.swf"</script>
+        <script src="js/vendor/vis.min.js"></script>
+        <script src="js/vendor/ion.rangeSlider.min.js"></script>
+        <script src="js/vendor/tweenMax.min.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
+</html>

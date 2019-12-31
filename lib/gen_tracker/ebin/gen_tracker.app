@@ -1,0 +1,7 @@
+{application,gen_tracker,
+             [{description,"gen_tracker"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[gen_tracker]}]}.

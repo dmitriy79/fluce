@@ -1,0 +1,12 @@
+{application,config2,
+             [{description,"config2"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,corelib]},
+              {mod,{config2_app,[]}},
+              {env,[]},
+              {modules,[config2,config2_app,config2_applier,config2_c1,
+                        config2_db,config2_disk,config2_helpers,config2_json,
+                        config2_lexer,config2_parser,config2_render,
+                        config2_routes,config2_server,config2_sup,
+                        flu_config]}]}.

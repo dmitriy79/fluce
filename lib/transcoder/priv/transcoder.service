@@ -1,0 +1,17 @@
+[Unit]
+Description=Coder
+Requires=jetson_clocks
+Requires=flussonic-epmd
+
+[Service]
+Environment=HOME=/root
+ExecStart=/opt/flussonic/lib/transcoder/priv/coder.sh chassis@server.l -noinput
+WatchdogSec=120
+Type=notify
+Restart=always
+NotifyAccess=main
+WorkingDirectory=/tmp
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+{application,tester,
+             [{description,"An OTP application"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {mod,{tester_app,[]}},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[cth_surefire2,cth_surefire3,fake_auth,fake_cas,
+                        fake_inet,fake_mpegts,fake_storage,flu_test,
+                        flu_test_proxy_handler,flussonic_ct_handler,
+                        simple_smtp,tester_app,tester_sup]},
+              {licenses,["Apache 2.0"]},
+              {links,[]}]}.

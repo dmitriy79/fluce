@@ -1,0 +1,10 @@
+{application,hls,
+             [{description,"hls"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,erlmedia]},
+              {mod,{hls_app,[]}},
+              {env,[]},
+              {modules,[hls,hls_app,hls_dvr,hls_live,hls_packetizer,
+                        hls_reader2,hls_reader_logic,hls_sliding_dvr,
+                        hls_stress_test,hls_sup,hls_template,hlsr]}]}.

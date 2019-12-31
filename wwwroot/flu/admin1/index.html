@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html ng-app="FlussonicAdmin">
+<head>
+  <title>Flussonic M</title>
+  <meta name="fragment" content="!" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf8">
+
+  <link rel="stylesheet" type="text/css" href="/flu/admin1/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/flu/admin1/css/override.css">
+  <link rel="stylesheet" type="text/css" href="/flu/admin1/css/calendar.css">
+  <link rel="stylesheet" type="text/css" href="/flu/admin1/css/jquery-jvectormap-1.2.2.css">
+
+  <script type="text/javascript" src="/flu/admin1/js/jquery.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/bootstrap.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/angular.min.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/angular-route.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/ui-bootstrap.min.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/bootstrap-typeahead.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/swfobject.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery.flot.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery.flot.time.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery.flot.format.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery.flot.resize.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery-jvectormap-1.2.2.min.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/jquery-jvectormap-world-mill-en.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/ad_injector.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/flussonic-config.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/flussonic-media.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/flussonic-player.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/flussonic.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/ad_injector.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/adverted-streams.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config-advanced.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config-caches.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config-global.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config-one-stream.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config-one-vod.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/config.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/dashboard.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/history.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/iptv-not-enabled.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/media-one.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/media.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/pulse-custom.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/pulse.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/support.html.js"></script>
+  <script type="text/javascript" src="/flu/admin1/js/vod.html.js"></script>
+
+  <script type="text/javascript">
+    window.Fl = {}; // initialize namespace
+
+    window.lpad = function(number,digits) {
+      var s = ""+ number;
+      for(var i = 0; i < digits - s.length; i++) {
+        s = "0" + s;
+      }
+      return s;
+    }
+
+    window.human_time = function(utc) {
+      var d = new Date();
+      d.setTime(utc*1000);
+      return d.getFullYear() + "-" + lpad(d.getMonth()+1, 2) + "-" + lpad(d.getDate(), 2) +
+        " " + lpad(d.getHours(),2) + ":" + lpad(d.getMinutes(),2) + ":" + lpad(d.getSeconds(),2);
+    }
+  </script>
+
+
+
+
+  <script type="text/javascript">
+  var admin_auth_token = '{{admin_auth_token}}';
+  </script>
+
+  <style type="text/css">
+  body {padding-top: 70px; padding-bottom: 80px;}  
+  .navbar-brand { max-width: 300px;}
+  /*#playStream .modal-dialog { width: 800px;}*/
+  .ng-hide { display: none !important;}
+  </style>
+
+</head>
+<body>
+<a class="sr-only" href="#content">Skip navigation</a>
+
+<div ng-controller="NavController">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a href="#/" class="navbar-brand visible-xs hidden-sm">Flussonic {{version}}</a>
+  </div>
+    
+
+  <div class="collapse navbar-collapse navbar-ex1-collapse" role="navigation">
+    <ul class="nav navbar-nav">
+
+      <li ng-class="navClass('dashboard')"><a href="#/"><span class="glyphicon glyphicon-home"></span>&nbsp; Dashboard</a></li>
+      <li class="dropdown">
+        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+          <span class="glyphicon glyphicon-eye-open"></span>&nbsp; Media <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li ng-class="navClass('media')"><a href="#/media"><span class="glyphicon glyphicon-film"></span>&nbsp; Streams</a></li>
+          <li ng-class="navClass('vod')"><a href="#/vod"><span class="glyphicon glyphicon-hdd"></span>&nbsp; VOD</a></li>
+          <li ng-class="navClass('history')"><a href="#/history"><span class="glyphicon glyphicon-stats"></span>&nbsp; Statistics</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-asterisk"></span>&nbsp; System <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li ng-class="navClass('pulse')"><a href="#/pulse"><span class="glyphicon glyphicon-signal"></span>&nbsp; Pulse</a></li>
+          <li ng-class="navClass('pulse-custom')"><a href="#/pulse-custom"><span class="glyphicon glyphicon-signal"></span>&nbsp; Custom Pulse</a></li>
+          <li ng-class="navClass('config')"><a href="#/config"><span class="glyphicon glyphicon-wrench"></span>&nbsp; Config</a></li>
+        </ul>
+      </li>
+
+
+      <li class="dropdown">
+        <a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-info-sign"></span>&nbsp; Support <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li ng-class="navClass('support')"><a href="#/support"><span class="glyphicon glyphicon-envelope"></span>&nbsp; Upload logs</a></li>
+          <li><a href="http://erlyvideo.org/doc" target="_blank"><span class="glyphicon glyphicon-book"></span>&nbsp; Documentation</a></li>
+        </ul>
+      </li>
+
+      <li ng-show="ad_injector" ng-class="navClass('ad_injector')"><a href="#/ad_injector"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp; Ad Injector</a></li>
+      <li ng-show="vsaas" ng-class="navClass('vsaas')"><a href="/vsaas"><span class="glyphicon glyphicon-facetime-video"></span>&nbsp; IP Cams</a></li>
+
+      <li ng-class="navClass('iptv')"><a href="#/iptv"><span class="glyphicon glyphicon-play-circle"></span>&nbsp; IPTV</a></li>
+
+
+    </ul>
+  </div>
+
+</nav>
+
+
+<div class="alert alert-danger">
+  <h1>This UI is not supported anymore. You can destroy your config using this UI.
+    <br/>
+    Use our <a href="/admin">supported admin UI</a></h1>
+</div>
+
+
+  <div ng-show="next_version" class="alert alert-info hidden-xs">
+    <form class="form-inline" role="form" action="/flussonic/api/auto_update" method="POST">
+      <div class="form-group">
+        <span>You are running Flussonic M version {{version}} and can update to {{next_version}}</span>
+      </div>
+    </form>
+  </div>
+
+
+  <div ng-repeat="e in flu_errors track by $index" class="alert alert-danger hidden-xs">
+    <div class="form-group">
+      <span>{{e.message}}</span>
+    </div>
+  </div>
+
+
+</div>
+<div ng-view>
+  
+</div>
+
+
+
+<div class="modal fade" tabindex="-1" id="playStream" role="dialog" aria-labelledby="Play stream" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 >
+          <button class="btn btn-warning cancel" data-dismiss="modal">Close</button>
+          <span class='play-title'>Video from Flussonic</span>
+        </h3>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

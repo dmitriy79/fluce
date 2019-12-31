@@ -1,0 +1,67 @@
+.popover {
+  max-width: 400px;
+}
+
+/*tr.offline {
+  background: #F0F0F0;
+}
+
+table.media-list tbody tr td {
+  border-top-color: #535353;
+}
+
+
+table.media-list tbody {
+  border-top: 1px #535353 solid;
+}
+
+*/
+
+.dvr-running {
+  font-weight: bold;
+  color: black;
+}
+
+.panel-group.config-panel-group .panel {
+  overflow: visible;
+}
+
+.modal.in .modal-dialog{
+  transform:none;
+}
+
+@media (max-width: 500px) {
+  .hidden-ios {
+    display: none !important;
+  }
+}
+
+
+@media (max-width: 500px) {
+  .hidden-xxs {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  button.hidden-xs {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  button.hidden-xs {
+    display: inline-block !important;
+  }  
+}
+
+.pulse-flow .pulse-preload {
+  color: #F0F0F0;
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: url(/flu/admin1/images/spinner.gif) center center no-repeat #F0F0F0;
+}
+
+
+

@@ -1,0 +1,10 @@
+{application,vision,
+             [{description,"vision"},
+              {vsn,"1"},
+              {registered,[]},
+              {applications,[stdlib,kernel,erlmedia]},
+              {mod,{vision_app,[]}},
+              {env,[]},
+              {modules,[detector_manager,ext_vision_worker,faces,
+                        plate_detector,vision,vision_app,vision_manager,
+                        vision_sup,vision_worker]}]}.
